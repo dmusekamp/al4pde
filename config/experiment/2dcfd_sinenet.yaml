@@ -1,0 +1,25 @@
+# @package _global_
+defaults:
+  - override /hydra: submitit
+  - override /prob_model/model_wrapper: sinenet_2d
+  - override /acquisition: random
+  - override /task: 2d_ns_rand
+
+
+seed: 0
+task:
+  reduced_resolution: 2
+
+wandb:
+  group: sinenet_2d
+
+prob_model:
+  num_models_ensemble: 1
+  first_model_prediction: True
+  synchronized_training: False
+  model_wrapper:
+    batch_size: 32
+    num_train_steps: 1
+    training_type: autoregressive
+num_al_iter: 4
+num_epochs: 400

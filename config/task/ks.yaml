@@ -1,0 +1,25 @@
+defaults:
+  - base
+
+reduced_resolution: 1
+
+ic_gen:
+  _target_: al4pde.tasks.ic_gen.ic_gen_ks.ICGenKS
+  N: 10
+  nx: 256
+  lmin: 1
+  lmax: 3
+
+param_gen:
+  _target_: al4pde.tasks.param_gen.PDEParamGenerator
+  min_val: 0.5
+  max_val: 1.5
+  log_scale: true
+
+sim:
+  _target_: al4pde.tasks.sim.ks_scipy.ParametricKSSim
+  ini_time: 0.
+  dt: 0.2
+  fin_time: 40
+  L: 64
+

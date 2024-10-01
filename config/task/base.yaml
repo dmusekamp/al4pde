@@ -1,0 +1,15 @@
+_target_: al4pde.tasks.task.Task
+data_path: 'data/data'
+run_save_path: 'data/runs'
+
+reduced_batch: 1
+reduced_resolution: 4
+reduced_resolution_t: 5
+initial_step: 1
+skip_initial_steps: 0
+use_test: false
+
+data_gen:
+  num_test_batches: 64
+  num_initial_batches: 8
+  batch_size: 32

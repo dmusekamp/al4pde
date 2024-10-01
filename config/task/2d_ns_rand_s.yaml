@@ -1,0 +1,15 @@
+defaults:
+  - 2d_ns_rand_l
+
+param_gen:
+  min_val: [1e-4, 1e-4]  # |eta|, |zeta|
+  max_val: [0.1, 0.1]    # |eta|, |zeta|
+  log_scale: [true, true]
+
+sim:
+  pde_name: 'CFD_2D_Rand_S'
+
+data_gen:
+  num_initial_batches: 8
+  num_test_batches: 256
+  batch_size: 16

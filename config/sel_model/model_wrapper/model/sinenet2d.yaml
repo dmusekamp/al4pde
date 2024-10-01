@@ -1,0 +1,10 @@
+_target_:  al4pde.modules.sinenet_cond_1d.SineNet
+hidden_channels: 16
+activation: "gelu"
+padding_mode: "circular"
+features: "last_layer"
+ch_mults: [1, 2, 2, 4]
+num_waves: 8
+mult: 1.425
+par1: 35490219
+use_scale_shift_norm: True

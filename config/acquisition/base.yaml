@@ -1,0 +1,5 @@
+defaults:
+  - data_schedule: exp
+batch_size: ${task.data_gen.batch_size}
+unc_num_rollout_steps_rel: 1.0
+unc_eval_mode: mean

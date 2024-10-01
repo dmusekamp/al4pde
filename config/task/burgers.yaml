@@ -1,0 +1,26 @@
+defaults:
+  - base
+
+ic_gen:
+  _target_: al4pde.tasks.ic_gen.ic_gen_burgers.ICGenBurgers
+  k_tot: 4
+  num_choice_k: 2
+  xL: 0.0
+  xR: 1.0
+  nx: 1024
+
+param_gen:
+  _target_: al4pde.tasks.param_gen.PDEParamGenerator
+  min_val: 0.001
+  max_val: 1
+  log_scale: true
+
+sim:
+  _target_: al4pde.tasks.sim.burgers.BurgersSim
+  ini_time: 0.
+  fin_time: 2.
+  dt: 0.01
+  CFL: 2.5e-1
+  show_steps: 100
+  if_norm: false
+  if_second_order: 1.0

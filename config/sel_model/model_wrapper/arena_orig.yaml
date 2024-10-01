@@ -1,0 +1,20 @@
+defaults:
+  - base
+  - scheduler: cosine
+  - model: unet1d
+
+_target_: al4pde.models.arena_wrapper.ArenaWrapper
+
+training_type: 'teacher_forcing_schedule'
+encode_pde_param_log: false
+block_grad: false
+difference_weight: 0.3
+norm_loss: false
+predict_delta: true
+batch_size: 512
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 1.0e-3
+
+

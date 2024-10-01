@@ -1,0 +1,37 @@
+defaults:
+  - base
+
+reduced_resolution: 1
+reduced_resolution_t: 10
+
+
+ic_gen:
+  _target_: al4pde.tasks.ic_gen.ic_gen_ks.ICGenKS
+  N: 5
+  nx: 64
+  lmin: 1
+  lmax: 3
+  amp_max: 0.4
+  length: 16
+
+param_gen:
+  _target_: al4pde.tasks.param_gen.PDEParamGenerator
+  min_val: [0, 0., 0.]
+  max_val: [3, 0.4, 1.]
+  log_scale: [False, False, False]
+
+
+sim:
+  _target_: al4pde.tasks.sim.ce.CombinedEquationNoForcing
+  pde_name: 'CENoForcing'
+  ini_time: 0.0
+  dt: 0.008  # nt=500
+  fin_time: 4.0
+
+data_gen:
+  num_test_batches: 64
+  num_initial_batches: 8
+  batch_size: 32
+
+
+

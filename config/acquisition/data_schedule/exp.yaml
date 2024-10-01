@@ -1,0 +1,2 @@
+_target_: al4pde.acquisition.data_schedule.ExponentialSchedule
+first_batch_num:  ${task.data_gen.num_initial_batches}

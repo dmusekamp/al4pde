@@ -1,0 +1,15 @@
+# @package _global_
+defaults:
+  - override /acquisition: coreset_maxdist
+
+acquisition:
+  use_latent_space: true
+  traj_transform: spatial_mean
+
+prob_model:
+  model_wrapper:
+    model:
+      features: "last_layer"
+
+wandb:
+  name: coreset_maxdist

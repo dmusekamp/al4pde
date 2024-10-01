@@ -1,0 +1,14 @@
+batch_size: 64
+num_workers: 0
+val_period: 20
+vis_period: 1000
+t_train: 201
+step_batch: -1
+num_train_steps: 2
+max_grad_norm: 50
+norm_mode: first
+noise: 0.001
+noise_mode: "constant"
+loss:
+  _target_: al4pde.models.loss.MSE
+  normalize_channels: False

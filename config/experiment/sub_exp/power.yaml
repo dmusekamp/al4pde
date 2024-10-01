@@ -1,0 +1,11 @@
+# @package _global_
+defaults:
+  - override /acquisition: power
+
+
+prob_model:
+  num_models_ensemble: 2
+
+wandb:
+  name: power
+

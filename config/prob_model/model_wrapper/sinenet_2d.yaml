@@ -1,0 +1,7 @@
+defaults:
+  - arena_orig
+  - override model: sinenet2d
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 1.0e-3

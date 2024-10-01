@@ -1,0 +1,3 @@
+defaults:
+  - base
+_target_: al4pde.acquisition.random.Random

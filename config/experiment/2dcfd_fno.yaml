@@ -1,0 +1,28 @@
+# @package _global_
+defaults:
+  - override /hydra: submitit
+  - override /prob_model/model_wrapper: fno
+  - override /acquisition: random
+  - override /task: 2d_ns_rand
+
+wandb:
+  group: fno_2d
+
+seed: 0
+task:
+  reduced_resolution: 2
+
+
+prob_model:
+  num_models_ensemble: 1
+  first_model_prediction: True
+  synchronized_training: False
+  model_wrapper:
+    batch_size: 16
+    num_train_steps: null
+    training_type: teacher_forcing_schedule
+    model:
+      width: 32
+
+num_al_iter: 4
+num_epochs: 500

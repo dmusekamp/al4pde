@@ -1,0 +1,24 @@
+# @package _global_
+defaults:
+  - override /hydra: submitit
+  - override /prob_model/model_wrapper: arena_orig
+  - override /acquisition: random
+  - override /task: ce_no_forcing
+
+
+prob_model:
+  num_models_ensemble: 1
+  first_model_prediction: True
+  synchronized_training: False
+  model_wrapper:
+    batch_size: 512
+    num_train_steps: 2
+    training_type: autoregressive
+
+
+
+seed: 0
+wandb:
+    group: ce_no_forcing
+num_epochs: 500
+num_al_iter: 5

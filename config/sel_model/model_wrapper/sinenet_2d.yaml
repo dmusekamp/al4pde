@@ -1,0 +1,13 @@
+defaults:
+  - arena_orig
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 1.0e-3
+
+model:
+  name: "sinenet8-adagn-2d"    # See pdearena.models.registry
+  hidden_channels: 32   # 64, 32, 16
+  num_waves: 4   # 8, 4
+  use_scale_shift_norm: True
+  padding_mode: "circular"

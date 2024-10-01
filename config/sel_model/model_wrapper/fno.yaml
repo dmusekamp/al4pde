@@ -1,0 +1,21 @@
+defaults:
+  - base
+  - scheduler: cosine
+
+_target_: al4pde.models.fno_wrapper.FNOWrapper
+training_type: 'teacher_forcing_schedule'
+encode_pde_param_log: false
+block_grad: false
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 1.e-3   # originally 1e-4
+  weight_decay: 0.0
+
+
+model:
+  if_conditional: true
+  num_channels: 1
+  modes: 20   # 12
+  width: 64   # 20
+  predict_delta: true

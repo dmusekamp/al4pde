@@ -1,0 +1,62 @@
+defaults:
+  - base
+
+# subsampling relevant for only for the ML model
+reduced_resolution: 2
+reduced_resolution_t: 1
+
+ic_gen:
+  _target_: al4pde.tasks.ic_gen.ic_gen_2d_ns_rand.ICGenNSRand
+  k_tot: 4
+  xL: 0.0
+  xR: 1.0
+  yL: 0.0
+  yR: 1.0
+  zL: 0.0
+  zR: 1.0
+  nx: 128
+  ny: 128
+  nz: 1
+  mach_min: 0.1
+  mach_max: 1.0
+  gamma: 1.6666666666666667
+  d0Min: 1.e-1
+  d0Max: 1.e1
+  T0Min: 1.e-1
+  T0Max: 1.e1
+  init_field_type: 'rand'
+  constrain_max: true
+  delDMin: 1.3e-2   # Increase delD and delP so that output variance is about the same after switch to max
+  delDMax: 0.26
+  delPMin: 4.e-2
+  delPMax: 0.8
+
+param_gen:
+  _target_: al4pde.tasks.param_gen.PDEParamGenerator
+  # eta:  ...  # PDE param: (min, max) = (0.01, 0.1)
+  # zeta: ...  # PDE param: (min, max) = (0.01, 0.1)
+  min_val: [1e-4, 1e-4]  # |eta|, |zeta|
+  max_val: [0.1, 0.1]    # |eta|, |zeta|
+  log_scale: [true, true]
+
+sim:
+  _target_: al4pde.tasks.sim.cfd.CFDSim
+  pde_name: 'CFD_2D_Rand_S'
+  same_eta_zeta: false
+  spatial_dim: 2   # 2D
+  ini_time: 0.0
+  fin_time: 1.0
+  dt: 0.05
+  CFL: 3.e-1
+  show_steps: 100
+  if_second_order: 1.0
+  bc: 'periodic'         # active BC
+  gamma: 1.6666666666666667
+  p_floor: 1.e-4
+
+
+
+data_gen:
+  num_initial_batches: 8
+  num_test_batches: 256
+  batch_size: 16

@@ -1,0 +1,20 @@
+defaults:
+  - base
+  - scheduler: lr
+  - model: unet1d
+
+_target_: al4pde.models.arena_wrapper.ArenaWrapper
+
+training_type: 'autoregressive'
+encode_pde_param_log: false
+block_grad: false
+num_train_steps: 2
+difference_weight: 0.3
+predict_delta: true
+
+optimizer:
+  _target_: torch.optim.Adam
+  lr: 3.e-3   # originally 1e-4
+  weight_decay: 0.0
+
+

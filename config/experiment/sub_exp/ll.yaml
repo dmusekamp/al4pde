@@ -1,0 +1,15 @@
+# @package _global_
+defaults:
+  - override /acquisition: lcmd
+
+acquisition:
+  use_latent_space: true
+  traj_transform: identity
+
+prob_model:
+  model_wrapper:
+    model:
+      features: "last_layer"
+
+wandb:
+  name: ll

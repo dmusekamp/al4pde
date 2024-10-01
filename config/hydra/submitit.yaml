@@ -1,0 +1,8 @@
+defaults:
+  - base
+  - override launcher: submitit_slurm
+
+launcher:
+  timeout_min: 4880
+  gpus_per_task: 1
+  name: ${wandb.group}_${wandb.name}

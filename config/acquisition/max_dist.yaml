@@ -1,0 +1,12 @@
+defaults:
+  - base
+_target_: al4pde.acquisition.distance_pool_based.DistancePoolBased
+pool_size: 100000
+num_rollout_steps_rel: 1.0
+pred_batch_size: 200
+predict_train: true
+use_latent_space: false
+
+selection:
+  _target_: bmdal_reg.bmdal.selection.MaxDistSelectionMethod
+  sel_with_train: true

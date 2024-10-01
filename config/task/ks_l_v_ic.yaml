@@ -1,0 +1,31 @@
+defaults:
+  - ks
+
+param_gen:
+  min_val: [0.5, 0.1]
+  max_val: [4, 100] # https://www.sciencedirect.com/science/article/pii/0167278986901661
+  log_scale: [false, false]
+
+ic_gen:
+  _target_: al4pde.tasks.ic_gen.ic_gen_ks.ICGenKS
+  N: 10
+  nx: 512
+  lmin: 1
+  lmax: 10
+
+
+sim:
+  pde_name: 'KSVarLVIC'
+
+  _target_: al4pde.tasks.sim.ks_jax.ParametricKSJaxSim
+  ini_time: 0.
+  dt: 0.05
+  fin_time: 40
+  L: 64
+
+
+reduced_resolution: 2 # original spatial res 256
+reduced_resolution_t: 20 # original dt=0.2, predict every 4 steps
+
+data_gen:
+  num_initial_batches: 8

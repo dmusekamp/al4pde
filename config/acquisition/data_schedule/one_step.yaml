@@ -1,0 +1,2 @@
+_target_: al4pde.acquisition.data_schedule.FixedSchedule
+batch_num_per_iter: [4800, 1]

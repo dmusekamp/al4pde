@@ -1,0 +1,7 @@
+_target_: al4pde.prob_models.ensemble.Ensemble
+defaults:
+  - model_wrapper: fno
+num_models_ensemble: 1
+unc_roll_out_mode: "independent"
+synchronized_training: False
+first_model_prediction: True

@@ -1,0 +1,9 @@
+defaults:
+  - max_dist
+
+selection:
+  _target_: bmdal_reg.bmdal.selection.MaxDistSelectionMethod
+  sel_with_train: true
+
+use_latent_space: true
+traj_transform: spatial_mean

@@ -1,0 +1,5 @@
+defaults:
+  - base
+_target_: al4pde.acquisition.uncertainty_based.UncertaintyBased
+pool_size: 100000
+selection_mode:  power

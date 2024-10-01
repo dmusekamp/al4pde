@@ -1,0 +1,9 @@
+defaults:
+  - max_dist
+
+selection:
+  _target_: bmdal_reg.bmdal.selection.LargestClusterMaxDistSelectionMethod
+  sel_with_train: true
+
+use_latent_space: false
+traj_transform: spatial_mean
