@@ -5,6 +5,14 @@ This repository contains the code for the paper **[Active Learning for Neural PD
 ![Active Learn Architecture](./active-learning-pipeline.png)
 
 
+-------------------------------
+
+## Updates
+
+- Accepted at the [NeurIPS'24 workshop, **D3S3: Data-driven and Differentiable Simulations, Surrogates, and Solvers**](https://d3s3workshop.github.io/).
+
+-------------------------------
+
 
 # Installation 
 
@@ -123,10 +131,33 @@ A new AL algorithm can be implemented by overwriting the **BatchSelection** clas
 ## How to add a new PDE?
 For a new PDE, a new subclass of **Simulator** has to be added, and the **n_step_sim()** method should be overwritten. In general, the **PDEParamGenerator** class can be configured to produce any simple, (log-) uniform distribution of PDE parameters. For a new IC generator, implement a subclass of the **ICGenerator** class. Here, the **_initialize_ic_params()** and **generate_initial_conditions()** methods have to be overwritten. All randomness should be contained in **_initialize_ic_params()** (for example sample the random amplitude in **_initialize_ic_params()**, and then transform them deterministically in **generate_initial_conditions()** to the true IC).
 
+----------------------
 
+# Publication and Citations 
 
+If you find our project useful, please cite using:
 
+<details>
+<summary>
+    <a href="[https://arxiv.org/abs/2210.07182](https://arxiv.org/abs/2408.01536)">Active Learning for Neural PDE Solvers - <b>D3S3@NeurIPS'2024, Vancouver</b> </a>
+</summary>
+<br/>
 
-
-
+```
+@article{al4pde-benchmark-musekamp:2024,
+  author       = {Daniel Musekamp and
+                  Marimuthu Kalimuthu and
+                  David Holzm{\"{u}}ller and
+                  Makoto Takamoto and
+                  Mathias Niepert},
+  title        = {Active Learning for Neural {PDE} Solvers},
+  journal      = {CoRR},
+  volume       = {abs/2408.01536},
+  year         = {2024},
+  url          = {https://doi.org/10.48550/arXiv.2408.01536},
+  doi          = {10.48550/ARXIV.2408.01536},
+  eprinttype    = {arXiv},
+  eprint       = {2408.01536},
+}
+```
 
