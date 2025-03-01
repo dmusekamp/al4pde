@@ -9,6 +9,8 @@ This repository contains the code for the paper **[Active Learning for Neural PD
 
 ## Updates
 
+<img src="https://iclr.cc/static/core/img/ICLR-logo.svg" width="96" height="16"/> [**Thirteenth International Conference on Learning Representations**](https://iclr.cc/Conferences/2025).
+
 - Accepted at the [NeurIPS'24 workshop, **D3S3: Data-driven and Differentiable Simulations, Surrogates, and Solvers**](https://d3s3workshop.github.io/).
 
 -------------------------------
@@ -68,7 +70,7 @@ wandb login    # authenticate using your API key by grabbing it from https://wan
 # first, generate data
 python -m scripts.gen_data --m task=burgers,ks_l_v_ic,2d_ns_rand,ce_no_forcing hydra=submitit
 
-# then, run active learning
+# Then, run active learning
 python -m scripts.al_submitit --m +experiment=ks  +experiment/sub_exp=power
 ```
 
@@ -82,22 +84,22 @@ python -m scripts.al_submitit --m +experiment=ks  +experiment/sub_exp=power seed
 ```
 For Burgers, seeds 0-9 were used.
 ## Configuring Experiments
-We use hydra to configure all experiments. The 'config' folder contains the modular configuration,
+We use Hydra to configure all experiments. The 'config' folder contains the modular configuration,
 which represents the code structure. 
 - 'main.yaml': contains the starting point of the configuration.
 - experiment: contains the changes to the defaults for a specific experiment from the paper
 - sub_exp: contains the changes to the defaults for a specific method
 
-To add a new experiment, it is the easiest to add a new file in experiment, and then call it using the example 
+To add a new experiment, it is easiest to add a new file in the experiment, and then call it using the example 
 code above (replace ks_val in the example with the name of the new config file).
 
 # Framework Overview
 
-AL4PDE consists of three main parts: the PDE and simulator specific information in **Task**, the  neural PDE solver and finally the AL algorithms themselves.
+AL4PDE consists of three main parts: the PDE and simulator-specific information in **Task**, the neural PDE solver, and finally, the AL algorithms themselves.
 
 Simulator and input generation:
 - **Task**
-  - Contains all PDE specific information
+  - Contains all PDE-specific information
   - Keeps **PDEParamGenerator**, **ICGenerator** and **Simulator**
 - **PDEParamGenerator** 
   - Generates a batch of PDE parameters
@@ -108,12 +110,12 @@ Simulator and input generation:
 
 Surrogate Training:
 - **Model**
-  - Wraps the actual pytorch module
+  - Wraps the actual PyTorch module
   - Provides interface for rollouts, forward, as well as train and test
 - **ProbModel**
   - Subclass of **Model**, adds interface for uncertainty estimates (unc_rollout)
 - **Module**
-  - Contains the pytorch modules such as FNO
+  - Contains the PyTorch modules such as FNO
 
 
 AL algorithms:
@@ -123,13 +125,13 @@ AL algorithms:
 
 
 
-## How to add a new Model?
+## How do I add a new model?
 A new model can be added by deriving a subclass from the **Model** base class. In the simplest case, this can be done by implementing the call to the pytorch module in the **forward()** method (see **ArenaWrapper**). Alternatively, a different training procedure can be implemented by overwriting **train_single_epoch()**.
 
-## How to add a new AL algorithm?
+## How do I add a new AL algorithm?
 A new AL algorithm can be implemented by overwriting the **BatchSelection** class from the **acquisition** package. For pool-based methods, the class **PoolBased** can be overwritten, where a specific method can implement the **select_next()** method, which just has to return the index of the samples to select from the pool. 
-## How to add a new PDE?
-For a new PDE, a new subclass of **Simulator** has to be added, and the **n_step_sim()** method should be overwritten. In general, the **PDEParamGenerator** class can be configured to produce any simple, (log-) uniform distribution of PDE parameters. For a new IC generator, implement a subclass of the **ICGenerator** class. Here, the **_initialize_ic_params()** and **generate_initial_conditions()** methods have to be overwritten. All randomness should be contained in **_initialize_ic_params()** (for example sample the random amplitude in **_initialize_ic_params()**, and then transform them deterministically in **generate_initial_conditions()** to the true IC).
+## How do I add a new PDE?
+A new subclass of **Simulator** has to be added for a new PDE, and the **n_step_sim()** method should be overwritten. In general, the **PDEParamGenerator** class can be configured to produce any simple, (log-) uniform distribution of PDE parameters. Implement a subclass of the **ICGenerator** class for a new IC generator. Here, the **_initialize_ic_params()** and **generate_initial_conditions()** methods have to be overwritten. All randomness should be contained in **_initialize_ic_params()** (for example, sample the random amplitude in **_initialize_ic_params()**, and then transform them deterministically in **generate_initial_conditions()** to the true IC).
 
 ----------------------
 
@@ -144,20 +146,13 @@ If you find our project useful, please cite using:
 <br/>
 
 ```
-@article{al4pde-benchmark-musekamp:2024,
-  author       = {Daniel Musekamp and
-                  Marimuthu Kalimuthu and
-                  David Holzm{\"{u}}ller and
-                  Makoto Takamoto and
-                  Mathias Niepert},
-  title        = {Active Learning for Neural {PDE} Solvers},
-  journal      = {CoRR},
-  volume       = {abs/2408.01536},
-  year         = {2024},
-  url          = {https://doi.org/10.48550/arXiv.2408.01536},
-  doi          = {10.48550/ARXIV.2408.01536},
-  eprinttype    = {arXiv},
-  eprint       = {2408.01536},
+@inproceedings{al4pde-benchmark-musekamp:2024,
+title={Active Learning for Neural {PDE} Solvers},
+author={Daniel Musekamp and Marimuthu Kalimuthu and David Holzm{\"u}ller and Makoto Takamoto and Mathias Niepert},
+booktitle={The Thirteenth International Conference on Learning Representations},
+year={2025},
+url={https://openreview.net/forum?id=x4ZmQaumRg}
 }
+
 ```
 
