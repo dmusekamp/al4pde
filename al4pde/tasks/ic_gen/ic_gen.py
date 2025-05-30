@@ -14,7 +14,7 @@ class ICGenerator:
             raise ValueError("Single fixed should only be used with requires_grad=False")
 
     def get_grid(self, n):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def initialize_ic_params(self, n: int) -> TensorDict:
         if self.single_fixed:
@@ -23,10 +23,10 @@ class ICGenerator:
             return self._initialize_ic_params(n)
 
     def _initialize_ic_params(self, n: int) -> TensorDict:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def generate_initial_conditions(self, ic_params: TensorDict, pde_params: torch.Tensor) -> torch.Tensor:
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def set_rng(self, rng):
         self.rng = rng

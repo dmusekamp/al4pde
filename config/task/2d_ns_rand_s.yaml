@@ -1,5 +1,5 @@
 defaults:
-  - 2d_ns_rand_l
+  - 2d_ns_rand
 
 param_gen:
   min_val: [1e-4, 1e-4]  # |eta|, |zeta|

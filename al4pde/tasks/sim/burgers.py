@@ -152,8 +152,32 @@ from jax import device_put, lax
 import numpy as np
 from al4pde.tasks.solver_utils import Courant, Courant_diff, bc, limiting
 from al4pde.tasks.sim.sim import Simulator
+from al4pde.utils import bxtc_to_btcx, btcx_to_bxtc
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
+
+def fdm_burgers(u, Lt, Lx, param):
+    batchsize = u.size(0)
+    nt = u.size(1)
+    nx = u.size(2)
+
+    u = u.reshape(batchsize, nt, nx)
+    dt = Lt / (nt-1)
+
+    u_h = torch.fft.fft(u, dim=2)
+    # Wavenumbers in y-direction
+    k_max = nx//2
+    k_x = torch.cat((torch.arange(start=0, end=k_max, step=1, device=u.device),
+                     torch.arange(start=-k_max, end=0, step=1, device=u.device)), 0).reshape(1,1,nx)
+    ux_h = 2j *np.pi/Lx*k_x*u_h
+    uxx_h = 2j *np.pi/Lx*k_x*ux_h
+    ux = torch.fft.irfft(ux_h[:, :, :k_max+1], dim=2, n=nx)
+    uxx = torch.fft.irfft(uxx_h[:, :, :k_max+1], dim=2, n=nx)
+    ut = (u[:, 2:, :] - u[:, :-2, :]) / (2 * dt)
+
+    Du = ut + (ux * u + param[...,None] * uxx)[:,1:-1,:]
+    return Du
 
 class BurgersSim(Simulator):
     """Evolve the initial conditions for the pde to get the full trajectory."""
@@ -297,4 +321,12 @@ class BurgersSim(Simulator):
         uu = self.sim_fun((u, pde_param)).block_until_ready()
         uu = uu.reshape([num_init_conds, it_tot, -1, 1])
         return uu, xc, tc
+
+    def pino_loss(self, traj, grid, pde_param):
+        zeros = torch.zeros_like(traj[..., :1, :])
+        Lx = (grid[0, 1, 0]  - grid[0, 0, 0])  * grid.shape[1]
+        traj = bxtc_to_btcx(traj)[:, :, 0]
+        pino_loss =  fdm_burgers(traj, self.fin_time - self.ini_time, Lx, pde_param).square().unsqueeze(2)
+        res =  torch.concat([zeros, btcx_to_bxtc(pino_loss), zeros], -2)
+        return res
 

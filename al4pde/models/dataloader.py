@@ -18,17 +18,12 @@ def load_grid(folders, reduced_resolution):
         y_coord_fname = os.path.join(root_path, 'y_coordinate.npy')
         z_coord_fname = os.path.join(root_path, 'z_coordinate.npy')
         xy_coord_fname = os.path.join(root_path, 'xy_coordinate.npy')
+        xyz_coord_fname = os.path.join(root_path, 'xyz_coordinate.npy')
 
         # 3D
-        if os.path.exists(z_coord_fname) and os.path.exists(y_coord_fname) and  os.path.exists(x_coord_fname):
-            _gridx = np.load(os.path.join(root_path, x_coord_fname))[:, np.newaxis]
-            _gridy = np.load(os.path.join(root_path, y_coord_fname))[:, np.newaxis]
-            _gridz = np.load(os.path.join(root_path, z_coord_fname))[:, np.newaxis]
-            _gridx = torch.from_numpy(_gridx)
-            _gridy = torch.from_numpy(_gridy)
-            _gridz = torch.from_numpy(_gridz)
-            X, Y, Z = torch.meshgrid(_gridx, _gridy, _gridz, indexing='ij')
-            grid = torch.stack((X, Y, Z), dim=-1)
+        if os.path.exists(xyz_coord_fname):
+            _gridxyz = np.load(os.path.join(root_path, xyz_coord_fname))
+            grid = torch.from_numpy(_gridxyz)
 
         # 2d
         elif os.path.exists(xy_coord_fname):
@@ -111,6 +106,7 @@ class NPYDataset(TrajDataset):
                  max_size=None,
                  skip_initial_steps=0,
                  one_step=False,
+                 save_in_reduced_res=False,
                  ):
 
         # Time steps used as initial conditions
@@ -119,6 +115,7 @@ class NPYDataset(TrajDataset):
         self.reduced_resolution_t = reduced_resolution_t
         self.reduced_resolution = reduced_resolution
         self.skip_initial_steps = skip_initial_steps
+        self.save_in_reduced_res = save_in_reduced_res
         fdata_list, pde_param_list, grid = self.load_data_list(folders, regexp, max_size, pde_name)
 
         # Each npy file has multiple ICs. Hence, we batch them along 0th dim to get shape (numICs, x, t, ch)
@@ -162,7 +159,8 @@ class NPYDataset(TrajDataset):
                     pde_params = np.load(os.path.join(root_path, pde_param_file))
 
                     fdata = load_fdata(root_path, fname, pde_name, spatial_dim)
-                    fdata = subsample_trajectory(fdata, self.reduced_resolution, self.reduced_resolution_t)
+                    if not self.save_in_reduced_res:
+                        fdata = subsample_trajectory(fdata, self.reduced_resolution, self.reduced_resolution_t)
                     fdata = fdata[..., self.skip_initial_steps:, :]
                     n_data += len(fdata)
 

@@ -126,6 +126,7 @@ def eval_on_new(task, prob_model, al_iter):
         reduced_batch=prob_model.reduced_batch,
         initial_step=prob_model.initial_step,
         skip_initial_steps=prob_model.skip_initial_steps,
+        save_in_reduced_res=task.save_in_reduced_res,
         regexp=".*alstp_" + str(al_iter) + ".*")
     data_loader = torch.utils.data.DataLoader(last_data, batch_size=prob_model.batch_size, shuffle=False)
     prob_model.evaluate(al_iter, data_loader, prefix="al_new_data/", time_step_name="al_iter")

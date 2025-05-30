@@ -75,8 +75,7 @@ def main(cfg: DictConfig):
             shutil.copytree(initial_data_path, task.traj_save_path, dirs_exist_ok=True)
 
         else:
-            generate_data(task, task.traj_save_path, cfg.task.data_gen.num_initial_batches, "init",
-                          cfg.task.data_gen.batch_size)
+            acq_strat.generate_initial(prob_model, cfg.task.data_gen.num_initial_batches)
         first_al_iter = 0
 
     for al_iter in range(first_al_iter, cfg.num_al_iter):

@@ -7,6 +7,7 @@ from al4pde.tasks.task import Task
 from al4pde.acquisition.data_schedule import DataSchedule
 from al4pde.evaluation.analysis import batch_errors
 from al4pde.prob_models.prob_model import ProbModel
+from scripts.gen_data import generate_data
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -25,6 +26,10 @@ class BatchSelection:
         self.unc_eval_mode = unc_eval_mode
         self.unc_num_rollout_steps = None
         self.set_num_time_steps(len(task.sim.t_coord[::task.reduced_resolution_t]))
+
+    def generate_initial(self, prob_model, num_initial_batches: int) -> None:
+        generate_data(self.task, self.task.traj_save_path, num_initial_batches, "init",
+                      self.batch_size)
 
     def get_next_params(self, prob_model: ProbModel) -> tuple[TensorDict, torch.Tensor]:
         """Return next batch of ic and pde params."""
@@ -95,7 +100,8 @@ class BatchSelection:
             self.task.save_trajectories(u_trajectories, pde_param_batch,
                                         u_xcoords, u_tcoords, al_iter, i, ic_params=ic_params_batch,
                                         pde_params_normed=pde_params_normed_batch)
-        wandb.log({"al/al_iter": al_iter, "al/sim_time": time.time() - t})
+        if al_iter != "init":
+            wandb.log({"al/al_iter": al_iter, "al/sim_time": time.time() - t})
         print("simulation  time", time.time() - t)
 
         prob_model.to(device)

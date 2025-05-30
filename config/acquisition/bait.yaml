@@ -1,0 +1,11 @@
+defaults:
+  - max_dist
+
+selection:
+  _target_: bmdal_reg.bmdal.selection.BaitFeatureSpaceSelectionMethod
+  sel_with_train: true
+  noise_sigma: 1e-2
+
+use_latent_space: false
+traj_transform: spatial_mean
+posterior_tfm : true

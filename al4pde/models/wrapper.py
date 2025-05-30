@@ -70,6 +70,7 @@ class ModelWrapper(Model):
                 reduced_batch=self.reduced_batch,
                 initial_step=self.initial_step,
                 skip_initial_steps=self.skip_initial_steps,
+                save_in_reduced_res=self.task.save_in_reduced_res
             ).set_num_steps(self.num_train_steps)
             self.train_data = train_data
             self._train_loader = torch.utils.data.DataLoader(train_data, batch_size=self.batch_size,
@@ -86,7 +87,8 @@ class ModelWrapper(Model):
                 reduced_resolution_t=self.reduced_resolution_t,
                 reduced_batch=self.reduced_batch,
                 initial_step=self.initial_step,
-                skip_initial_steps=self.skip_initial_steps
+                skip_initial_steps=self.skip_initial_steps,
+                save_in_reduced_res = self.task.save_in_reduced_res
             )
 
             self._val_loader = torch.utils.data.DataLoader(val_data, batch_size=self.batch_size,

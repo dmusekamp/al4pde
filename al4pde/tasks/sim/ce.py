@@ -3,6 +3,9 @@ import torch
 import numpy as np
 from tensordict import TensorDict
 from torch import Tensor
+
+from al4pde.utils import bxtc_to_btcx, btcx_to_bxtc
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 from al4pde.tasks.sim.sim import Simulator
 from al4pde.tasks.sim.mp_pde_solvers.generate.generate_data import initial_conditions

@@ -45,3 +45,5 @@ class Simulator:
     def n_step_sim(self, ic, pde_params, grid, init_time, n_steps):
         raise NotImplementedError
 
+    def pino_loss(self, traj, grid, pde_param):
+        return NotImplementedError("PINO loss not implemented for PDE", self.pde_name)

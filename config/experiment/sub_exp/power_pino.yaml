@@ -1,0 +1,10 @@
+# @package _global_
+defaults:
+  - override /acquisition: power
+
+prob_model:
+  num_models_ensemble: 1
+  unc_roll_out_mode: pino
+
+wandb:
+  name: power_pino

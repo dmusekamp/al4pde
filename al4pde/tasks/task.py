@@ -4,6 +4,8 @@ from torch import Tensor
 import jax.numpy as jnp
 from tensordict import TensorDict
 
+from al4pde.utils import subsample_trajectory, subsample_grid
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
@@ -12,7 +14,7 @@ class Task:
 
     def __init__(self, ic_gen, param_gen, sim, data_path, run_save_path, initial_step, reduced_batch,
                  reduced_resolution, reduced_resolution_t, skip_initial_steps=0,
-                 data_gen=None, use_test=False):
+                 data_gen=None, use_test=False, save_in_reduced_res=False):
 
         self.ic_gen = ic_gen
         self.param_gen = param_gen
@@ -29,6 +31,7 @@ class Task:
         self.spatial_dim = sim.spatial_dim
         self.num_channels = sim.num_channels
         self.pde_param_names = sim.pde_param_names
+        self.save_in_reduced_res = save_in_reduced_res
 
         if use_test:
             self.eval_set_path = os.path.join(data_path, self.pde_name, "test")
@@ -70,6 +73,17 @@ class Task:
 
     def save_trajectories(self, u_trajectories, pde_params, u_grid_coords, u_tcoords,  al_iter, opt_batch_num,
                           save_path=None, ic_params=None, pde_params_normed=None):
+
+        if self.save_in_reduced_res:
+            u_trajectories = self.to_sim_format(
+                subsample_trajectory(self.to_ml_format(u_trajectories)
+                                     , self.reduced_resolution, self.reduced_resolution_t))
+
+            u_grid_coords = u_grid_coords[::self.reduced_resolution]
+            if self.spatial_dim > 1:
+                u_grid_coords = u_grid_coords[:, ::self.reduced_resolution]
+            if self.spatial_dim == 3:
+                u_grid_coords = u_grid_coords[:, :, ::self.reduced_resolution]
         if save_path is None:
             save_path = self.traj_save_path
 
@@ -125,3 +139,6 @@ class Task:
             return traj.permute(0, 2, 3, 4, 1, 5)
         else:
             raise ValueError(self.spatial_dim)
+
+    def pino_loss(self, traj, grid, pde_param):
+        return self.sim.pino_loss(traj, grid, pde_param)

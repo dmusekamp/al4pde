@@ -11,7 +11,7 @@ from al4pde.prob_models.prob_model import ProbModel
 from al4pde.acquisition.pool_based import PoolBased
 
 
-def max_dist_selection(batch_size, train_mat, pool_mat, sel_method_factory):
+def max_dist_selection(batch_size, train_mat, pool_mat, sel_method_factory, posterior_tfm=False):
     train_mat = train_mat.to(device)
     pool_mat = pool_mat.to(device)
 
@@ -19,6 +19,13 @@ def max_dist_selection(batch_size, train_mat, pool_mat, sel_method_factory):
 
     train_features = Features(IdentityFeatureMap(n_features=n_features), TensorFeatureData(train_mat))
     pool_features = Features(IdentityFeatureMap(n_features=n_features), TensorFeatureData(pool_mat))
+    if posterior_tfm:
+        scale_tfm = train_features.scale_tfm()
+        train_features = scale_tfm(train_features)
+        pool_features = scale_tfm(pool_features)
+        posterior_tfm = train_features.posterior_tfm(sigma=1e-2, allow_kernel_space_posterior=False)
+        train_features = posterior_tfm(train_features)
+        pool_features = posterior_tfm(pool_features)
 
     sel_method = sel_method_factory(pool_features=pool_features, train_features=train_features)
     return sel_method.select(batch_size).detach().cpu()  # returns index into the pool set that have been selected
@@ -28,7 +35,8 @@ class DistancePoolBased(PoolBased):
 
     def __init__(self, task, data_schedule, batch_size, pool_size, unc_eval_mode,
                  unc_num_rollout_steps_rel, num_rollout_steps_rel,
-                 selection, predict_train, use_latent_space, pred_batch_size=128, traj_transform="identity"):
+                 selection, predict_train, use_latent_space, pred_batch_size=128, traj_transform="identity",
+                 posterior_tfm=False):
 
         self.num_rollout_steps_rel = num_rollout_steps_rel
         self.num_rollout_steps = None
@@ -42,6 +50,7 @@ class DistancePoolBased(PoolBased):
         self.sketch_ftm = None
         self.pred_batch_size = pred_batch_size
         self.traj_transform = traj_transform
+        self.posterior_tfm = posterior_tfm
         assert traj_transform in ["identity", "fourier", "spatial_mean", "spatial_max", "add_periodic",
                                   "fourier_real_imag", "fourier_amplitude", "traj_mean"]
 
@@ -169,7 +178,8 @@ class DistancePoolBased(PoolBased):
             print("pool_preparation_time", time.time() - t)
             n_samples = self.num_batches(al_iter) * self.batch_size
             t = time.time()
-            sel_idx = max_dist_selection(n_samples, train_features, pool_features, self.sel_method_factory)
+            sel_idx = max_dist_selection(n_samples, train_features, pool_features, self.sel_method_factory,
+                                         posterior_tfm=self.posterior_tfm)
             print("pure_selection_time", time.time() - t)
         return sel_idx
 

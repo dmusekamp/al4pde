@@ -195,7 +195,9 @@ def plot_initial_conditions(task, al_iter, n):
         last_data = NPYDataset(
             pde_name=task.pde_name,
             folders=task.train_data_folders,
-            initial_step=1, regexp=".*alstp_" + str(al_iter) + ".*")
+            initial_step=1, regexp=".*alstp_" + str(al_iter) + ".*",
+        save_in_reduced_res=task.save_in_reduced_res,
+        )
         data_loader = torch.utils.data.DataLoader(last_data, n)
 
         with torch.no_grad():

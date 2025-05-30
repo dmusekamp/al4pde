@@ -8,7 +8,7 @@ reduced_resolution_t: 5
 initial_step: 1
 skip_initial_steps: 0
 use_test: false
-
+save_in_reduced_res: False
 data_gen:
   num_test_batches: 64
   num_initial_batches: 8

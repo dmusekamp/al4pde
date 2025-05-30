@@ -215,11 +215,11 @@ def metric_func(pred, target, if_mean=True, Lx=1., Ly=1., Lz=1., iLow=4, iHigh=1
         err_BD_y += (pred[:, :, :, -1, :] - target[:, :, :, -1, :]) ** 2
         err_BD_z = (pred[:, :, :, :, 0] - target[:, :, :, :, 0]) ** 2
         err_BD_z += (pred[:, :, :, :, -1] - target[:, :, :, :, -1]) ** 2
-        err_BD = torch.sum(err_BD_x.view([nb, -1, nt]), dim=-2) \
-                 + torch.sum(err_BD_y.view([nb, -1, nt]), dim=-2) \
-                 + torch.sum(err_BD_z.view([nb, -1, nt]), dim=-2)
+        err_BD = torch.sum(err_BD_x.contiguous().view([nb, -1, nt]), dim=-2) \
+                 + torch.sum(err_BD_y.contiguous().view([nb, -1, nt]), dim=-2) \
+                 + torch.sum(err_BD_z.contiguous().view([nb, -1, nt]), dim=-2)
         err_BD = err_BD / (2 * nx * ny + 2 * ny * nz + 2 * nz * nx)
-        err_BD = torch.mean(torch.sqrt(err_BD), dim=0)
+        err_BD = torch.sqrt(err_BD)
 
     if len(idxs) == 4:  # 1D
         nx = idxs[2]

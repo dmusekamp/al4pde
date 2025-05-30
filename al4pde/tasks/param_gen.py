@@ -62,34 +62,6 @@ class PDEParamGenerator(object):
         self.rng = rng
 
 
-class CEParamGenerator:
-
-    def __init__(self, min_alpha, max_alpha, min_beta, max_beta, min_gamma, max_gamma, min_ampl, max_ampl,
-                 min_omega, max_omega, min_l, max_l):
-        n_ft = 5
-        self.min_cont = [min_alpha, min_beta, min_gamma] + [min_ampl] * n_ft + [min_omega] * n_ft + [0] * n_ft
-        self.max_cont = [max_alpha, max_beta, max_gamma] + [max_ampl] * n_ft + [max_omega] * n_ft + [2 * np.pi] * n_ft
-        self.cont_gen = PDEParamGenerator(self.min_cont, self.max_cont, [False] * len(self.min_cont))
-        self.int_gen = PDEParamGeneratorInt(min_l, max_l, n_ft)
-        self.rng = None
-        self.num_pde_params = len(self.min_cont) + n_ft
-        self.log_scale = [False] * self.num_pde_params
-
-    def get_normed_pde_params(self, n):
-        cont_vals = self.cont_gen.get_normed_pde_params(n)
-        int_vals = self.int_gen.get_normed_pde_params(n)
-        return torch.concat([cont_vals, int_vals.float()], -1)
-
-    def get_pde_params(self, pde_params_normed):
-        cont_vals = self.cont_gen.get_pde_params(pde_params_normed[:, :-self.int_gen.num_pde_params])
-        int_vals = self.int_gen.get_pde_params(pde_params_normed[:, -self.int_gen.num_pde_params:].int())
-        return torch.concat([cont_vals, int_vals.float()], -1)
-
-    def set_rng(self, rng):
-        self.rng = rng
-        self.cont_gen.rng = rng
-        self.int_gen.rng = rng
-
 
 class PDEParamGeneratorInt:
     def __init__(self, min_val, max_val, n):

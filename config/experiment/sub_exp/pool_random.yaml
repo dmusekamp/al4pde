@@ -1,0 +1,6 @@
+# @package _global_
+defaults:
+  - override /acquisition: pool_random
+
+wandb:
+  name: pool_random

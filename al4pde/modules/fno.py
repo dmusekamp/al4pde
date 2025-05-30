@@ -229,7 +229,7 @@ class FNO2d(nn.Module):
         self.fc1 = nn.Linear(self.width, 128)
         self.fc2 = nn.Linear(128, num_channels)
 
-    def forward(self, x, grid):
+    def forward(self, x, grid, return_features=False):
         # x dim = [b, x1, x2, t*v]
         x = torch.cat((x, grid), dim=-1)
         x = self.fc0(x)
@@ -261,8 +261,10 @@ class FNO2d(nn.Module):
         x = x.permute(0, 2, 3, 1)
         x = self.fc1(x)
         x = F.gelu(x)
+        features = x
         x = self.fc2(x)
-
+        if return_features:
+            return x.unsqueeze(-2), features.unsqueeze(-2)
         return x.unsqueeze(-2)
 
 
@@ -362,7 +364,7 @@ class FNO3d(nn.Module):
         self.fc1 = nn.Linear(self.width, 128)
         self.fc2 = nn.Linear(128, num_channels)
 
-    def forward(self, x, grid):
+    def forward(self, x, grid, return_features=False):
         # x dim = [b, x1, x2, x3, t*v]
         x = torch.cat((x, grid), dim=-1)
         x = self.fc0(x)
@@ -393,5 +395,8 @@ class FNO3d(nn.Module):
         x = x.permute(0, 2, 3, 4, 1)  # pad the domain if input is non-periodic
         x = self.fc1(x)
         x = F.gelu(x)
+        features = x
         x = self.fc2(x)
+        if return_features:
+            return x.unsqueeze(-2), features.unsqueeze(-2)
         return x.unsqueeze(-2)

@@ -1,0 +1,49 @@
+defaults:
+  - base
+
+reduced_resolution: 4
+reduced_resolution_t: 5
+
+
+ic_gen:
+  _target_: al4pde.tasks.ic_gen.ic_gen_1d_ns_rand.ICGen1DNSRand
+  k_tot: 3
+  num_choice_k: 2
+  xL: -1.0
+  xR: 1.0
+  yL: -1.0
+  yR: 1.0
+  zL: -1.0
+  zR: 1.0
+  nx: 512
+  ny: 1
+  nz: 1
+  init_field_type: 'rand'
+
+param_gen:
+  _target_: al4pde.tasks.param_gen.PDEParamGenerator
+  min_val: [1e-4]  # |eta|, |zeta|
+  max_val: [0.1]    # |eta|, |zeta|
+  log_scale: [true]
+  # eta:  ...  # PDE param: (min, max) = (1e-8, 0.1)
+  # zeta: ...  # PDE param: (min, max) = (1e-8, 0.1)
+
+sim:
+  _target_: al4pde.tasks.sim.cfd.CFDSim
+  pde_name: 'CFD_1D_RAND'
+  spatial_dim: 1
+  ini_time: 0.0
+  fin_time: 2.0    # 1.0
+  dt: 0.01
+  CFL: 3.e-1
+  show_steps: 100
+  if_second_order: 1.0
+  bc: 'trans'         # active BC
+  gamma: 1.6666666666666667
+  p_floor: 1.e-4
+  same_eta_zeta: true
+
+data_gen:
+  num_test_batches: 1024
+  num_initial_batches: 128
+  batch_size: 2

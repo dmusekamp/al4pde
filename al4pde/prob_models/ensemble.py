@@ -10,6 +10,10 @@ from al4pde.models.build_wrapper import build_wrapper
 from al4pde.evaluation.stats import LossUncCorr, UncAvg
 
 
+def pino_uncertainty(prob_model: ProbModel, task, xx, grid, final_step, pde_param=None, t_idx=None):
+    traj = prob_model.roll_out(xx, grid, final_step, pde_param, t_idx)
+    return traj, task.pino_loss(traj, grid, pde_param)
+
 class Ensemble(ProbModel):
 
     def __init__(self, task, unc_roll_out_mode, base_models, synchronized_training=True, adapt_unc_to_loss=True,
@@ -18,6 +22,7 @@ class Ensemble(ProbModel):
         super().__init__(task,  b0.training_type, b0.t_train, b0.batch_size, b0.val_period, b0.vis_period, b0.loss)
         self.base_models = nn.ModuleList(base_models)
         self.unc_roll_out_mode = unc_roll_out_mode
+        assert unc_roll_out_mode in ["mean", "independent", "pino"]
         self.synchronized_training = synchronized_training
         self.adapt_unc_to_loss = adapt_unc_to_loss
         self.first_model_prediction = first_model_prediction
@@ -92,6 +97,8 @@ class Ensemble(ProbModel):
             if return_features:
                 raise NotImplementedError
             return super().unc_roll_out(xx, grid, final_step, pde_param, t_idx)
+        elif self.unc_roll_out_mode == "pino":
+            return pino_uncertainty(self, self.task, xx, grid, final_step, pde_param, t_idx)
         else:
             return ValueError(self.unc_roll_out_mode)
 
@@ -148,6 +155,12 @@ class Ensemble(ProbModel):
             feat = torch.concat([o[1] for o in b_m_out], dim=-1)
             return traj, feat
         return torch.stack(b_m_out, dim=0)
+
+    def roll_out(self, xx, grid, final_step, pde_param=None, t_idx=None, return_features=False):
+        if return_features:
+            out, feat = self._roll_out_all(xx, grid, final_step, pde_param, t_idx, return_features)
+            return out.mean(0), feat
+        return self._roll_out_all(xx, grid, final_step, pde_param, t_idx, return_features).mean(0)
 
     def sample_trajectory(self, xx, grid, final_step, pde_param=None, t_idx=None):
         traj = self._roll_out_all(xx, grid, final_step, pde_param, t_idx)
